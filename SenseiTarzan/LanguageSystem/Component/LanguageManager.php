@@ -13,7 +13,6 @@ use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use SenseiTarzan\LanguageSystem\Class\Language;
-use SenseiTarzan\LanguageSystem\Main;
 
 class LanguageManager
 {
