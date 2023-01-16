@@ -3,6 +3,7 @@ branches:
   - master
 projects:
   libLanguageSystem:
+    path: ""
     type: library
     model: virion
 ...
