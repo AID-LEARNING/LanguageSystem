@@ -9,6 +9,7 @@ use pocketmine\lang\Translatable;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
+use pocketmine\plugin\PluginException;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
@@ -22,22 +23,27 @@ class LanguageManager
     /**
      * @var Config
      */
-    public Config $config;
+    private Config $config;
     /**
      * @var Config
      */
-    public Config $data;
+    private Config $data;
     /**
      * @var PluginBase
      */
-    public Plugin $plugin;
+    private Plugin $plugin;
     /**
      * @var Language[]
      */
     private array $language = [];
 
+    private Language $defaultLanguage;
+
     public function __construct(Plugin $pl)
     {
+        if (self::$instance !== null) {
+            throw new PluginException("the " . self::getInstance()->getPlugin()->getName() . " plugin has already created an instance");
+        }
         self::setInstance($this);
         @mkdir($pl->getDataFolder() . "Language/");
         @mkdir($pl->getDataFolder() . "Language/data");
@@ -47,19 +53,26 @@ class LanguageManager
         $this->loadLanguage();
     }
 
-    public static function getInstance(): self
-    {
-        return self::$instance;
-    }
-
     public function loadLanguage(): void
     {
-        foreach ($this->config->getAll() as $name => $info){
-            if (isset($info['default']) && $info['default'] === true && !isset($this->language['default'])){
-                $this->language['default'] = new Language($this->plugin, $name, $info["mini"], $info["image"] ?? "textures\blocks\barrier", ($info["path"] ?? "Language/data/$name.ini"));
-            }
+        foreach ($this->config->getAll() as $name => $info) {
             $this->language[$info["mini"]] = new Language($this->plugin, $name, $info["mini"], $info["image"] ?? "textures\blocks\barrier", ($info["path"] ?? "Language/data/$name.ini"));
+
+            if (!isset($this->defaultLanguage) && ($info['default'] ?? false) === true) {
+                $this->defaultLanguage = new Language($this->plugin, $name, $info["mini"], $info["image"] ?? "textures\blocks\barrier", ($info["path"] ?? "Language/data/$name.ini"));
+            }
         }
+        if (!isset($this->defaultLanguage)) {
+            throw new PluginException("the " . $this->getPlugin()->getName() . " plugin has no default language");
+        }
+    }
+
+    /**
+     * @return Language[]
+     */
+    public function getAllLang(): array
+    {
+        return $this->language;
     }
 
     /**
@@ -68,75 +81,77 @@ class LanguageManager
     public function getUILanguage(Player $player): void
     {
         $all_lang = $this->getAllLang();
-        $ui = new SimpleForm(function (Player $player, $data) use ($all_lang){
-            if ($data === null){
+        $ui = new SimpleForm(function (Player $player, $data) use ($all_lang) {
+            if ($data === null) {
                 return;
             }
-            $lang = $all_lang[$data]?->getMini();
+            $lang = $all_lang[$data]->getMini();
             $this->data->set($player->getName(), $lang);
             $this->data->save();
             $player->sendMessage($this->getTranslate($lang, "Language.change", [], ["language" => $all_lang[$data]]));
         });
 
-        foreach ($all_lang as $lang){
+        foreach ($all_lang as $lang) {
             $ui->addButton($lang->getName(), SimpleForm::IMAGE_TYPE_PATH, $lang->getImage());
         }
         $player->sendForm($ui);
     }
 
     /**
-     * @return array
-     */
-    public function getAllLang(): array
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param Player|string|CommandSender|ConsoleCommandSender $player
+     * @param CommandSender|string $player
      * @param string $cat
      * @param array|null $labels
      * @param mixed|string $default
      * @return string|array
      */
-    public function getTranslate(Player|string|CommandSender|ConsoleCommandSender $player, string $cat, ?array $labels = [], mixed $default = ''): string|array
+    public function getTranslate(CommandSender|string $player, string $cat, ?array $labels = [], mixed $default = ''): string|array
     {
-        if (is_string($player)){
+        if (is_string($player)) {
             $player = Server::getInstance()->getPlayerExact($player) ?? $player;
         }
-        return $this->getLanguagePlayer($player)?->translate($cat,$labels,$default);
+        return $this->getLanguagePlayer($player)->translate($cat, $labels, $default) ?? $default;
     }
 
     /**
-     * @param Player|string|CommandSender|ConsoleCommandSender $player
+     * @param CommandSender|string $player
      * @param Translatable $translatable
      * @param mixed|string $default
      * @return string|array
      */
-    public function getTranslateWithTranslatable(Player|string|CommandSender|ConsoleCommandSender $player,Translatable $translatable, mixed $default = ''): string|array
+    public function getTranslateWithTranslatable(CommandSender|string $player, Translatable $translatable, mixed $default = ''): string|array
     {
-        if (is_string($player)){
+        if (is_string($player)) {
             $player = Server::getInstance()->getPlayerExact($player) ?? $player;
         }
         $labels = [];
-        foreach($translatable->getParameters() as $i => $p){
+        foreach ($translatable->getParameters() as $i => $p) {
             $labels[$i] = $p instanceof Translatable ? $this->getTranslateWithTranslatable($player, $p) : $p;
         }
-        return $this->getLanguagePlayer($player)?->translate($translatable->getText(),$labels,$default);
+        return $this->getTranslate($player,$translatable->getText(), $labels, $default);
     }
 
     /**
-     * @param Player|string|CommandSender|ConsoleCommandSender $player
-     * @return Language|null
+     * @param string|CommandSender $player
+     * @return Language
      */
-    public function getLanguagePlayer(Player|string|CommandSender|ConsoleCommandSender $player): ?Language
+    public function getLanguagePlayer(CommandSender|string $player): Language
     {
         return $this->getLanguage($this->data->get(is_string($player) ? $player : $player->getName(), "fra"));
     }
 
 
-    public function getLanguage(string $languageName): Language{
-        return $this->language[$languageName] ?? $this->language['default'];
+    public function getLanguage(string $languageName): Language
+    {
+        return $this->language[$languageName] ?? $this->defaultLanguage;
     }
+
+    /**
+     * @return Plugin
+     */
+    public function getPlugin(): Plugin
+    {
+        return $this->plugin;
+    }
+
 
 }
