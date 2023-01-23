@@ -108,7 +108,7 @@ class LanguageManager
         });
 
         foreach ($all_lang as $lang) {
-            $ui->addButton($lang->getName(), SimpleForm::IMAGE_TYPE_PATH, $lang->getImage());
+            $ui->addButton($lang->getName(), $lang->getImage()->getType(), $lang->getImage()->getPath());
         }
         $player->sendForm($ui);
     }
