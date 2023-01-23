@@ -103,7 +103,7 @@ class LanguageManager
             }
             $this->data->set($player->getName(), $data);
             $this->data->save();
-            $player->sendMessage($this->getTranslate($player, "Language.change", [], ["language" => $this->getLanguage($data)->getName()]));
+            $player->sendMessage($this->getTranslate($player, "Language.change", ["language" => $this->getLanguage($data)->getName()], "You have taken the language {&language}"));
         });
 
         foreach ($all_lang as $lang) {
