@@ -15,7 +15,7 @@ class languageCommand extends BaseCommand
     protected function prepare(): void
     {
         $this->setPermission("command.change-language.permissions");
-        $this->registerSubCommand(new reloadSubCommand($this->plugin,"modify"));
+        $this->registerSubCommand(new reloadSubCommand($this->plugin,"reload"));
         $this->addConstraint(new InGameRequiredConstraint($this));
     }
 
