@@ -6,6 +6,9 @@ use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\console\ConsoleCommandSender;
 use pocketmine\lang\Translatable;
+use pocketmine\permission\DefaultPermissions;
+use pocketmine\permission\Permission;
+use pocketmine\permission\PermissionManager;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
@@ -14,6 +17,7 @@ use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 use SenseiTarzan\LanguageSystem\Class\Language;
+use SenseiTarzan\LanguageSystem\Commands\languageCommand;
 
 class LanguageManager
 {
@@ -55,6 +59,8 @@ class LanguageManager
 
     public function loadLanguage(): void
     {
+        $this->language = [];
+        unset($this->defaultLanguage);
         foreach ($this->config->getAll() as $name => $info) {
             $this->language[$info["mini"]] = new Language($this->plugin, $name, $info["mini"], $info["image"] ?? "textures\blocks\barrier", ($info["path"] ?? "Language/data/$name.ini"));
 
@@ -65,6 +71,16 @@ class LanguageManager
         if (!isset($this->defaultLanguage)) {
             throw new PluginException("the " . $this->getPlugin()->getName() . " plugin has no default language");
         }
+    }
+
+    public function loadCommands(): void{
+        ($permissionManager = PermissionManager::getInstance())->addPermission(new Permission("command.change-language.permissions","language exchange authorization"));
+        $permissionManager->addPermission(new Permission("command.reload-language.permissions","reload language authorization "));
+        $permissionManager->getPermission(DefaultPermissions::ROOT_USER)->addChild("command.change-language.permissions", true);
+        $permissionManager->getPermission(DefaultPermissions::ROOT_OPERATOR)->addChild("command.reload-language.permissions", true);
+        $this->plugin->getServer()->getCommandMap()->register("senseitarzan", new languageCommand($this->plugin, "language", aliases: [
+            "lang"
+        ]));
     }
 
     /**
