@@ -78,8 +78,8 @@ class LanguageManager
         $permissionManager->addPermission(new Permission("command.reload-language.permissions","reload language authorization "));
         $permissionManager->getPermission(DefaultPermissions::ROOT_USER)->addChild("command.change-language.permissions", true);
         $permissionManager->getPermission(DefaultPermissions::ROOT_OPERATOR)->addChild("command.reload-language.permissions", true);
-        $this->plugin->getServer()->getCommandMap()->register("senseitarzan", new languageCommand($this->plugin, "language-" . strtolower($name), aliases: [
-            "lang"
+        $this->plugin->getServer()->getCommandMap()->register("senseitarzan", new languageCommand($this->plugin, "language-" . $name = strtolower($name), aliases: [
+            "lang-" . $name
         ]));
     }
 
