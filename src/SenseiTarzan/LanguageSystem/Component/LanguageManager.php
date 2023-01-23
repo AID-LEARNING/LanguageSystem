@@ -101,10 +101,9 @@ class LanguageManager
             if ($data === null) {
                 return;
             }
-            $lang = $this->getLanguage($data);
-            $this->data->set($player->getName(), $lang);
+            $this->data->set($player->getName(), $data);
             $this->data->save();
-            $player->sendMessage($this->getTranslate($player, "Language.change", [], ["language" => $lang->getMini()]));
+            $player->sendMessage($this->getTranslate($player, "Language.change", [], ["language" => $this->getLanguage($data)->getName()]));
         });
 
         foreach ($all_lang as $lang) {
