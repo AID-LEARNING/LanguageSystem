@@ -97,18 +97,18 @@ class LanguageManager
     public function getUILanguage(Player $player): void
     {
         $all_lang = $this->getAllLang();
-        $ui = new SimpleForm(function (Player $player, $data) use ($all_lang) {
+        $ui = new SimpleForm(function (Player $player, ?string $data) use ($all_lang): void {
             if ($data === null) {
                 return;
             }
-            $lang = $all_lang[$data]->getMini();
+            $lang = $this->getLanguage($data);
             $this->data->set($player->getName(), $lang);
             $this->data->save();
-            $player->sendMessage($this->getTranslate($lang, "Language.change", [], ["language" => $all_lang[$data]]));
+            $player->sendMessage($this->getTranslate($player, "Language.change", [], ["language" => $lang->getMini()]));
         });
 
         foreach ($all_lang as $lang) {
-            $ui->addButton($lang->getName(), $lang->getImage()->getType(), $lang->getImage()->getPath());
+            $ui->addButton($lang->getName(), $lang->getImage()->getType(), $lang->getImage()->getPath(), $lang->getMini());
         }
         $player->sendForm($ui);
     }
