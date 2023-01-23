@@ -4,6 +4,7 @@ namespace SenseiTarzan\LanguageSystem\Class;
 
 
 use pocketmine\plugin\Plugin;
+use SenseiTarzan\IconUtils\IconForm;
 use SenseiTarzan\Path\Config;
 
 class Language 
@@ -11,7 +12,7 @@ class Language
 
     private string $name;
     private string $mini;
-    private string $image;
+    private IconForm $image;
     private Config $config;
     private Plugin $plugin;
 
@@ -20,7 +21,7 @@ class Language
         $this->plugin = $plugin;
         $this->name = $name;
         $this->mini = $mini;
-        $this->image = $image;
+        $this->image = IconForm::create($image);
         $this->config = new Config($plugin->getDataFolder() . $path, Config::INI);
     }
 
@@ -34,7 +35,7 @@ class Language
         return $this->mini;
     }
 
-    public function getImage(): string
+    public function getImage(): IconForm
     {
         return $this->image;
     }

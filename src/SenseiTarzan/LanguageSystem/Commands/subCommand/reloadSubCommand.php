@@ -4,7 +4,6 @@ namespace SenseiTarzan\LanguageSystem\Commands\subCommand;
 
 use CortexPE\Commando\BaseSubCommand;
 use pocketmine\command\CommandSender;
-use pocketmine\permission\PermissionManager;
 use SenseiTarzan\LanguageSystem\Component\LanguageManager;
 
 class reloadSubCommand extends BaseSubCommand
