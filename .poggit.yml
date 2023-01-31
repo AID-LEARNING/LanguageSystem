@@ -6,9 +6,4 @@ projects:
     path: ""
     type: library
     model: virion
-    libs:
-      - src: AID-LEARNING/FormAPI/libFormAPI
-        version: ^2.1.0
-      - src: AID-LEARNING/IconForm/libIconForm
-        version: ^1.0.0
 ...
