@@ -23,4 +23,8 @@ class languageCommand extends BaseCommand
     {
         LanguageManager::getInstance()->getUILanguage($sender);
     }
+    public function getPermission(): string
+    {
+        return "command.change-language.permissions";
+    }
 }

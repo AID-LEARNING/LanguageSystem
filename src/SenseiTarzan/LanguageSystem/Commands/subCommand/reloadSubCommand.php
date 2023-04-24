@@ -18,4 +18,8 @@ class reloadSubCommand extends BaseSubCommand
     {
         LanguageManager::getInstance()->loadLanguage();
     }
+    public function getPermission(): string
+    {
+        return "command.reload-language.permissions";
+    }
 }
