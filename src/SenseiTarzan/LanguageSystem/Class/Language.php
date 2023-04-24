@@ -10,6 +10,8 @@ use SenseiTarzan\Path\Config;
 class Language 
 {
 
+    public const NO_EXIST_TRANSLATE = '3a5c4c91-8456-48bc-aa28-820311398941';
+
     private string $name;
     private string $mini;
     private IconForm $image;

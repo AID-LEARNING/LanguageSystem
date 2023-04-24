@@ -16,8 +16,10 @@ use pocketmine\plugin\PluginException;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
+use SenseiTarzan\ExtraEvent\Component\EventLoader;
 use SenseiTarzan\LanguageSystem\Class\Language;
 use SenseiTarzan\LanguageSystem\Commands\languageCommand;
+use SenseiTarzan\LanguageSystem\Listener\PacketListener;
 
 class LanguageManager
 {
@@ -81,6 +83,7 @@ class LanguageManager
         $this->plugin->getServer()->getCommandMap()->register("senseitarzan", new languageCommand($this->plugin, "language-" . $name = strtolower($name), aliases: [
             "lang-" . $name
         ]));
+        EventLoader::loadEventWithClass($this->plugin, PacketListener::class);
     }
 
     /**
