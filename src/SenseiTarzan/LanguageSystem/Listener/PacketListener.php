@@ -27,8 +27,8 @@ class PacketListener
                         if ($player === null) continue;
                         $description = $commandDatum->description;
                         $descriptionTranslate = ($description instanceof Translatable ?
-                            LanguageManager::getInstance()->getTranslateWithTranslatable($player, $description, Language::NO_EXIST_TRANSLATE) :
-                            LanguageManager::getInstance()->getTranslate($player, $description, default: Language::NO_EXIST_TRANSLATE));
+                            LanguageManager::getInstance()->getTranslateModeNoSaveDefaultWithTranslatable($player, $description, Language::NO_EXIST_TRANSLATE) :
+                            LanguageManager::getInstance()->getTranslateModeNoSaveDefault($player, $description, default: Language::NO_EXIST_TRANSLATE));
                         if ($descriptionTranslate === Language::NO_EXIST_TRANSLATE) continue;
                         $commandDatum->description = $descriptionTranslate;
                     }

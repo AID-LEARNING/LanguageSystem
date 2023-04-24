@@ -130,6 +130,32 @@ class LanguageManager
         return $this->getLanguagePlayer($player)->translate($cat, $labels, $default) ?? $default;
     }
 
+    public function getTranslateModeNoSaveDefault(CommandSender|string $player, string $cat, ?array $labels = [], mixed $default = ''): string|array
+    {
+        if (is_string($player)) {
+            $player = Server::getInstance()->getPlayerExact($player) ?? $player;
+        }
+        return $this->getLanguagePlayer($player)->translateModeNoSaveDefault($cat, $labels, $default) ?? $default;
+    }
+
+    /**
+     * @param CommandSender|string $player
+     * @param Translatable $translatable
+     * @param mixed|string $default
+     * @return string|array
+     */
+    public function getTranslateModeNoSaveDefaultWithTranslatable(CommandSender|string $player, Translatable $translatable, mixed $default = ''): string|array
+    {
+        if (is_string($player)) {
+            $player = Server::getInstance()->getPlayerExact($player) ?? $player;
+        }
+        $labels = [];
+        foreach ($translatable->getParameters() as $i => $p) {
+            $labels[$i] = $p instanceof Translatable ? $this->getTranslateWithTranslatable($player, $p) : $p;
+        }
+        return $this->getTranslateModeNoSaveDefault($player,$translatable->getText(), $labels, $default);
+    }
+
     /**
      * @param CommandSender|string $player
      * @param Translatable $translatable

@@ -7,7 +7,7 @@ use pocketmine\plugin\Plugin;
 use SenseiTarzan\IconUtils\IconForm;
 use SenseiTarzan\Path\Config;
 
-class Language 
+class Language
 {
 
     public const NO_EXIST_TRANSLATE = '3a5c4c91-8456-48bc-aa28-820311398941';
@@ -51,29 +51,56 @@ class Language
     {
         $search = ['%n', '\n'];
         $replace = ["\n", "\n"];
-        if (is_null($labels)){
+        if (is_null($labels)) {
             $labels = [];
         }
-        if (!empty($labels)){
-            if (array_is_list($labels)){
-                for ($i = 0; $i < count($labels); ++$i){
+        if (!empty($labels)) {
+            if (array_is_list($labels)) {
+                for ($i = 0; $i < count($labels); ++$i) {
                     $search[] = '&' . ($i + 1);
                     $replace[] = $labels[$i];
                 }
-            }else{
-                foreach ($labels as $sea => $rep){
+            } else {
+                foreach ($labels as $sea => $rep) {
                     $search[] = "{&" . $sea . '}';
                     $replace[] = $rep;
                 }
             }
         }
         $msg = $this->getConfig()->getNested($cat);
-        if (is_null($msg)){
+        if (is_null($msg)) {
             $msg = $default ?? $cat;
             $this->getConfig()->setNested($cat, $msg);
             $this->getConfig()->save();
         }
-        return  str_replace($search, $replace, $msg);
+        return str_replace($search, $replace, $msg);
+    }
+
+    public function translateModeNoSaveDefault(string $cat, ?array $labels = null, mixed $default = null): array|string
+    {
+        $search = ['%n', '\n'];
+        $replace = ["\n", "\n"];
+        if (is_null($labels)) {
+            $labels = [];
+        }
+        if (!empty($labels)) {
+            if (array_is_list($labels)) {
+                for ($i = 0; $i < count($labels); ++$i) {
+                    $search[] = '&' . ($i + 1);
+                    $replace[] = $labels[$i];
+                }
+            } else {
+                foreach ($labels as $sea => $rep) {
+                    $search[] = "{&" . $sea . '}';
+                    $replace[] = $rep;
+                }
+            }
+        }
+        $msg = $this->getConfig()->getNested($cat);
+        if (is_null($msg)) {
+            $msg = $default ?? $cat;
+        }
+        return str_replace($search, $replace, $msg);
     }
 
     public function getPlugin(): Plugin
