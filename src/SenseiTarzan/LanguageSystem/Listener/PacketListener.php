@@ -58,8 +58,8 @@ class PacketListener
 						if ($player === null) continue;
 						$description = $commandDatum->getDescription();
 						$descriptionTranslate = ($description instanceof Translatable ?
-							$languageManager->getTranslateModeNoSaveDefaultWithTranslatable($player, $description, default: $commandDatum->description) :
-							$languageManager->getTranslateModeNoSaveDefault($player, $description, default: $commandDatum->description));
+							$languageManager->getTranslateModeNoSaveDefaultWithTranslatable($player, $description, default: $description) :
+							$languageManager->getTranslateModeNoSaveDefault($player, $description, default: $description));
 						$commandDatum->description = $descriptionTranslate;
 					}
 				}
