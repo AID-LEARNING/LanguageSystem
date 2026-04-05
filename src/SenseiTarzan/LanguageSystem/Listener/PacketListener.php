@@ -81,7 +81,11 @@ class PacketListener
      */
     private static function getReflectionProperty(object|string $object, string $property) : ReflectionProperty
     {
-        $key = $object::class . "::" . $property;
+        if(is_string($object)){
+            $key = $object . "::" . $property;
+        }else{
+            $key = $object::class . "::" . $property;
+        }
         if (!isset(self::$reflectionCache[$key])) {
             $ref = new ReflectionProperty($object, $property);
             self::$reflectionCache[$key] = $ref;
